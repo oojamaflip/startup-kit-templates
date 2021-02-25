@@ -43,29 +43,6 @@ Parameters:
     MaxLength: 255
     AllowedPattern: "^[a-zA-Z][-a-zA-Z0-9]*$"
 
-  DatabaseStackName:
-    Description: Name of an active CloudFormation stack of database resources
-    Type: String
-    MinLength: 1
-    MaxLength: 255
-    AllowedPattern: "^[a-zA-Z][-a-zA-Z0-9]*$"
-
-  DatabaseName:
-    Description: Database name (schema).
-    Type: String
-    MinLength: 1
-    MaxLength: 255
-    AllowedPattern: "^[a-zA-Z][-a-zA-Z0-9]*$"
-
-  DatabasePassword:
-    NoEcho: true
-    Type: String
-    Description: Database admin account password
-    MinLength: 6
-    MaxLength: 41
-    AllowedPattern: "[a-zA-Z0-9]*"
-    ConstraintDescription: Password must contain only alphanumeric characters
-
   AppS3Bucket:
     Description: S3 Bucket containing your application package.
     Type: String
@@ -340,46 +317,6 @@ Resources:
       - Namespace: aws:elasticbeanstalk:application:environment
         OptionName: AWS_REGION
         Value: !Ref AWS::Region
-
-          # ENVIRONMENT VARIABLES - NODE, RAILS - Move to parameter store
-      - Namespace: aws:elasticbeanstalk:application:environment
-        OptionName: DB_PASSWORD
-        Value: !Ref DatabasePassword
-
-      - Namespace: aws:elasticbeanstalk:application:environment
-        OptionName: DB_USER
-        Value:
-          Fn::ImportValue: !Sub ${DatabaseStackName}-DatabaseUser
-
-      - Namespace: aws:elasticbeanstalk:application:environment
-        OptionName: DB_NAME
-        Value: !Ref DatabaseName
-
-      - Namespace: aws:elasticbeanstalk:application:environment
-        OptionName: DB_HOST
-        Value:
-          Fn::ImportValue: !Sub "${DatabaseStackName}-DatabaseURL"
-
-      # ENVIRONMENT VARIABLES - SPRING
-      - Namespace: aws:elasticbeanstalk:application:environment
-        OptionName: spring.datasource.password
-        Value: !Ref DatabasePassword
-
-      - Namespace: aws:elasticbeanstalk:application:environment
-        OptionName: spring.datasource.username
-        Value:
-          Fn::ImportValue: !Sub "${DatabaseStackName}-DatabaseUser"
-
-      - Namespace: aws:elasticbeanstalk:application:environment
-        OptionName: spring.datasource.url
-        Value:
-          "Fn::Join":
-          - ''
-          - - 'jdbc:mysql://'
-            - !ImportValue
-                "Fn::Sub": "${DatabaseStackName}-DatabaseURL"
-            - ':3306/'
-            - Ref: DatabaseName
 
   # IAM resources
   AppRole:
