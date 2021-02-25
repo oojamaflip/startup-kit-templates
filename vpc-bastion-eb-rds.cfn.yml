@@ -9,7 +9,7 @@ Parameters:
 
   TemplateBucket:
     Type: String
-    Default: awslabs-startup-kit-templates-deploy-v5
+    Default: andrewwhitehouse-aws-templates
     Description: The template bucket for the CloudFormation templates
 
   EnvironmentName:
